@@ -1,0 +1,11 @@
+Commands:
+
+from client:
+{"command":"electLeader","myID":<mynodeID>}
+from server:
+{"returnType":"leaderElection","id":<leaderID>,"fileList":<fileList>}
+
+from client:
+{"command":"submitFileList","list":<fileList>}
+from server:
+{"returnType":"fileList","response":<response>}
