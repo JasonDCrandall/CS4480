@@ -38,7 +38,6 @@ flowTable = {
 }
 
 def main():
-    #TODO fill in the method
     # Open a connection and wait for input from the router
     with socket(AF_INET,SOCK_STREAM) as s:
         s.bind((HOST, PORT))
@@ -57,6 +56,7 @@ def main():
                 connection.send(error.encode())
             if(command == "requestTable"):
                 tableData = json.dumps(flowTable)
+                print("Sending flow table")
                 connection.send(tableData.encode())
 
 if __name__ == "__main__":

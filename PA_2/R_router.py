@@ -20,7 +20,7 @@ def main():
     # TODO fill in the method
     # Ask for the flow table from C
     getFlowTable()
-    print(flowTable)
+    print("Initial Flow table from C: ", flowTable)
     # Open a connection to A and wait for input
     # Gather all of the messages into a global array
     # for each message, match against the flow table and perform proper action
@@ -46,21 +46,6 @@ def getFlowTable():
         flowTable = data.decode()
 
 
-
-'''
-with socket(AF_INET, SOCK_STREAM) as s:
-    try:
-        s.connect((HOST, SERVER_PORT))
-    except:
-        print(f"Server failed to respond.")
-    command = {
-        "command": "requestTable"
-    }
-    print('Sending Command: ', command)
-    s.send(json.dumps(command).encode())
-    data = s.recv(1024)
-    print('Received Data: ', data)
-'''
 
 if __name__ == "__main__":
     main()
