@@ -12,6 +12,13 @@ HOST = 'localhost'
 PORT = 2222
 ROUTER = 3333
 
+def main():
+    #TODO fill in the method
+    # Open a connection and wait for input from the router
+    # Send the router the flow table and close the connection
+    return
+
+'''
 with socket(AF_INET, SOCK_STREAM) as s:
     s.bind((HOST, PORT))
     s.listen(2)
@@ -29,3 +36,7 @@ with socket(AF_INET, SOCK_STREAM) as s:
             connection.send(returnMessage.encode())
         returnMessage = "Got the message"
         connection.send(returnMessage.encode())
+'''
+
+if __name__ == "__main__":
+    main()
