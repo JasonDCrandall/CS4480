@@ -20,7 +20,7 @@ def main():
     # TODO fill in the method
     # Ask for the flow table from C
     getFlowTable()
-    visualTable = json.dumps(flowTable, indent=2)
+    visualTable = json.dumps(json.loads(flowTable), indent=2)
     print("Initial Flow table from C: ", visualTable)
     # Open a connection to A and wait for input
     # Gather all of the messages into a global array
