@@ -23,8 +23,8 @@ def generateMessages():
     global msgArr
     # Loop and create a series of messages to append to the global arr
     count = 0
-    while (count < 5):
-        msg = bytearray(10)
+    while (count < 100):
+        msg = bytearray(512)
         sra = random.randint(0,99)
         dsa = random.randint(0,99)
         srp = random.randint(0,49)

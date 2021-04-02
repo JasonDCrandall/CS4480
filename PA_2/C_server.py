@@ -30,7 +30,7 @@ flowTable = {
             "statistics": 0
         },
         {
-            "match": "True",
+            "match": "'No Match Found'",
             "action": "drop",
             "statistics": 0
         }

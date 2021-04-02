@@ -31,6 +31,8 @@ def main():
         cmdInput = input("")
         if cmdInput == "q":
             exit()
+        if cmdInput == "table":
+            print(json.dumps(flowTable, indent=4))
     # Gather all of the messages into a global array
     # for each message, match against the flow table and perform proper action
     # Modify array with new data
@@ -58,8 +60,8 @@ def startServer():
     with socket(AF_INET, SOCK_DGRAM) as s:
         s.bind((HOST, PORT))
         while True:
-            data, addr = s.recvfrom(1024)
-            print(f"Received msg from {addr}: {data}")
+            data, addr = s.recvfrom(512)
+            #print(f"Received msg from {addr}: {data}")
             performAction(data)
             # t = threading.Thread(target = performAction, daemon=True, args=(data,))
             # t.start()
@@ -67,7 +69,7 @@ def startServer():
 def performAction(data):
     global flowTable
     hexdata = data.hex()
-    print(hexdata)
+    #print(hexdata)
     sra = int(hexdata[0:2], 16)
     dsa = int(hexdata[2:4], 16)
     srp = int(hexdata[4:6], 16)
