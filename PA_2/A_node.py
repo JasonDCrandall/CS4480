@@ -24,7 +24,8 @@ def generateMessages():
     # Loop and create a series of messages to append to the global arr
     count = 0
     while (count < 100):
-        msg = bytearray(512)
+        #TODO Change amount of messages and size
+        msg = bytearray(10)
         sra = random.randint(0,99)
         dsa = random.randint(0,99)
         srp = random.randint(0,49)
@@ -45,32 +46,12 @@ def sendToRouter():
     for msg in msgArr:
         with socket(AF_INET, SOCK_DGRAM) as s:
             try:
-                print("Sending MSG: ", msg)
+                print("Sending MSG: ", msg.hex())
                 s.sendto(msg, (HOST, ROUTER))
             except:
                 print("Failed to connect to router")
-    # Loop through the array of messages and send them
-    # Close the connection
 
 
 if __name__ == "__main__":
     main()
 
-
-
-
-'''
-test = "sra <= 20 and dsa <= 20 and srp > 10 and dsp > 10"
-sra = 0
-dsa = 10
-srp = 11 
-dsp = 11
-tmp = eval(test)
-print(tmp)
-test2 = "sra = 21;srp = 41"
-tmp = exec(test2)
-print(sra)
-print(srp)
-if("No Match Found"):
-    print("hi")
-'''

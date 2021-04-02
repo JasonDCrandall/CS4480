@@ -15,13 +15,13 @@ SERVER_PORT = 2222
 ANODE = 4444
 BNODE = 5555
 flowTable = None
+msgCount = 0
 
 
 def main():
-    # TODO fill in the method
     # Ask for the flow table from C
     getFlowTable()
-    print("Initial Table from C: ",flowTable)
+    print("Initial Table from C: ",json.dumps(flowTable, indent=4))
     # Open a connection to A and wait for input
     t = threading.Thread(target = startServer, daemon=True)
     t.start()
@@ -33,10 +33,6 @@ def main():
             exit()
         if cmdInput == "table":
             print(json.dumps(flowTable, indent=4))
-    # Gather all of the messages into a global array
-    # for each message, match against the flow table and perform proper action
-    # Modify array with new data
-    # Send appropriate messages to B
     return
 
 
@@ -57,42 +53,59 @@ def getFlowTable():
         flowTable = json.loads(data)
 
 def startServer():
+    global msgCount
     with socket(AF_INET, SOCK_DGRAM) as s:
         s.bind((HOST, PORT))
         while True:
             data, addr = s.recvfrom(512)
             #print(f"Received msg from {addr}: {data}")
             performAction(data)
-            # t = threading.Thread(target = performAction, daemon=True, args=(data,))
-            # t.start()
+            msgCount += 1
+            if msgCount == 100:
+                print(json.dumps(flowTable, indent=4))
 
 def performAction(data):
     global flowTable
     hexdata = data.hex()
-    #print(hexdata)
     sra = int(hexdata[0:2], 16)
     dsa = int(hexdata[2:4], 16)
     srp = int(hexdata[4:6], 16)
     dsp = int(hexdata[6:8], 16)
 
-    print("Header data at R: ", sra, dsa, srp, dsp)
+    #print("Header data at R: ", sra, dsa, srp, dsp)
     for entry in flowTable["table"]:
         match = entry["match"]
         action = entry["action"]
         statistics = entry["statistics"]
         if(eval(match)):
-            print("Match on: ", match)
+            #print("Match on: ", match)
+            #print("Action to be made: ", action)
             entry["statistics"] = statistics + 1
             if(action == "forward"):
-                forwardPacket()
+                print("Received: ",hexdata)
+                forwardPacket(data)
             elif (action != "drop"):
-                exec(action)
+                print("Received: ",hexdata)
+                ldict = {}
+                exec(action, globals(),ldict)
+                sra = ldict['sra']
+                srp = ldict['srp']
+                #print("Edited header data at R: ", sra, dsa, srp, dsp)
                 # Reformat header
-                forwardPacket()
+                updatedMsg = bytearray.fromhex(hexdata)
+                updatedMsg[0] = sra
+                updatedMsg[2] = srp
+                packet = bytes(updatedMsg)
+                forwardPacket(packet)
             break
 
-def forwardPacket():
-
+def forwardPacket(packet):
+    with socket(AF_INET, SOCK_DGRAM) as s:
+        try:
+            print("Sending MSG: ", packet.hex())
+            s.sendto(packet, (HOST, BNODE))
+        except:
+            print("Failed to connect to B Node")
     return
 
 

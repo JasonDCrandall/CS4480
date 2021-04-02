@@ -16,7 +16,7 @@ flowTable = {
     "table": [
         {
             "match": "sra <= 20 and dsa <= 20 and srp > 10 and dsp > 10",
-            "action": "sra = 21;srp = 40",
+            "action": "sra = 21;srp = 41",
             "statistics": 0
         },
         {
