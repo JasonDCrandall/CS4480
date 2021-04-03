@@ -25,7 +25,7 @@ def startServer():
     with socket(AF_INET, SOCK_DGRAM) as s:
         s.bind((HOST, PORT))
         while True:
-            data, addr = s.recvfrom(512)
+            data, addr = s.recvfrom(1024)
             print('Received Data: ', data.hex())
 
 if __name__ == "__main__":

@@ -40,7 +40,6 @@ def generateMessages():
         count += 1
 
 def sendToRouter():
-    #TODO fill in method
     global msgArr
     # Form a UDP connection with the router
     for msg in msgArr:
@@ -49,7 +48,7 @@ def sendToRouter():
                 print("Sending MSG: ", msg.hex())
                 s.sendto(msg, (HOST, ROUTER))
             except:
-                print("Failed to connect to router")
+                print("Failed to send message to router")
 
 
 if __name__ == "__main__":

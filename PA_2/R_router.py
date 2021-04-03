@@ -16,24 +16,15 @@ ANODE = 4444
 BNODE = 5555
 flowTable = None
 msgCount = 0
+foundMatches = []
 
 
 def main():
     # Ask for the flow table from C
     getFlowTable()
-    print("Initial Table from C: ",json.dumps(flowTable, indent=4))
+    #print("Initial Table from C: ",json.dumps(flowTable, indent=4))
     # Open a connection to A and wait for input
-    t = threading.Thread(target = startServer, daemon=True)
-    t.start()
-
-    # Initiate the client loop for a safe exit
-    while True:
-        cmdInput = input("")
-        if cmdInput == "q":
-            exit()
-        if cmdInput == "table":
-            print(json.dumps(flowTable, indent=4))
-    return
+    startServer()
 
 
 def getFlowTable():
@@ -63,6 +54,7 @@ def startServer():
             msgCount += 1
             if msgCount == 100:
                 print(json.dumps(flowTable, indent=4))
+                return
 
 def performAction(data):
     global flowTable
@@ -80,12 +72,13 @@ def performAction(data):
         if(eval(match)):
             #print("Match on: ", match)
             #print("Action to be made: ", action)
+            if(match not in foundMatches):
+                foundMatches.append(match)
+                print(f"Match: {match}\nMsg Header: {sra} {dsa} {srp} {dsp}\n")
             entry["statistics"] = statistics + 1
             if(action == "forward"):
-                print("Received: ",hexdata)
                 forwardPacket(data)
             elif (action != "drop"):
-                print("Received: ",hexdata)
                 ldict = {}
                 exec(action, globals(),ldict)
                 sra = ldict['sra']
@@ -102,7 +95,7 @@ def performAction(data):
 def forwardPacket(packet):
     with socket(AF_INET, SOCK_DGRAM) as s:
         try:
-            print("Sending MSG: ", packet.hex())
+            # print("Sending MSG: ", packet.hex())
             s.sendto(packet, (HOST, BNODE))
         except:
             print("Failed to connect to B Node")
