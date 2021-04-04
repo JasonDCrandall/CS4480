@@ -10,9 +10,11 @@ import threading
 
 HOST = 'localhost'
 PORT = 5555
+msgCount = 0
 
 def main():
     startServer()
+    print(msgCount)
     # t = threading.Thread(target = startServer, daemon=True)
     # t.start()
 
@@ -23,11 +25,28 @@ def main():
     #         exit()
 
 def startServer():
+    global msgCount
     with socket(AF_INET, SOCK_DGRAM) as s:
         s.bind((HOST, PORT))
         while True:
-            data, addr = s.recvfrom(1024)
-            print('Received Data: ', data.hex())
+            data, addr = s.recvfrom(2048)
+            command = ''
+            try:
+                jsonData = json.loads(data.decode())
+                command = jsonData["command"]
+            except:
+                print("Unaccepted Format")
+            if(command == "terminate"):
+                return
+            elif(command == "sendMessage"):
+                message = jsonData["message"]
+                sra = int(message[0:2], 16)
+                dsa = int(message[2:4], 16)
+                srp = int(message[4:6], 16)
+                dsp = int(message[6:8], 16)
+                msgCount += 1
+                if (jsonData["firstModified"]):
+                    print('First Modified Header: ',sra,dsa,srp,dsp)
 
 if __name__ == "__main__":
     main()

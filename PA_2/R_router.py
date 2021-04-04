@@ -23,7 +23,6 @@ firstModified = False
 def main():
     # Ask for the flow table from C
     getFlowTable()
-    #print("Initial Table from C: ",json.dumps(flowTable, indent=4))
     # Open a connection to A and wait for input
     startServer()
 
@@ -56,10 +55,12 @@ def startServer():
             msgCount += 1
             if msgCount == 100:
                 print(json.dumps(flowTable, indent=4))
+                terminateConnection()
                 return
 
 def performAction(data):
     global flowTable
+    global firstModified
     hexdata = data.hex()
     sra = int(hexdata[0:2], 16)
     dsa = int(hexdata[2:4], 16)
@@ -72,36 +73,53 @@ def performAction(data):
         action = entry["action"]
         statistics = entry["statistics"]
         if(eval(match)):
-            #print("Match on: ", match)
-            #print("Action to be made: ", action)
             if(match not in foundMatches):
                 foundMatches.append(match)
-                print(f"Match: {match}\nMsg Header: {sra} {dsa} {srp} {dsp}\n")
+                print(f"First Match For: {match}\nMessage Header: {sra} {dsa} {srp} {dsp}\n")
             entry["statistics"] = statistics + 1
             if(action == "forward"):
-                forwardPacket(data)
+                forwardPacket(data, False)
             elif (action != "drop"):
                 ldict = {}
                 exec(action, globals(),ldict)
                 sra = ldict['sra']
                 srp = ldict['srp']
-                #print("Edited header data at R: ", sra, dsa, srp, dsp)
                 # Reformat header
                 updatedMsg = bytearray.fromhex(hexdata)
                 updatedMsg[0] = sra
                 updatedMsg[2] = srp
                 packet = bytes(updatedMsg)
-                forwardPacket(packet)
+                if(not firstModified):
+                    firstModified = True
+                    forwardPacket(packet, firstModified)
+                else:
+                    forwardPacket(packet,False)
             break
 
-def forwardPacket(packet):
+def forwardPacket(packet, modified):
+    command = {
+        "command": "sendMessage",
+        "message": packet.hex(),
+        "firstModified": modified
+    }
     with socket(AF_INET, SOCK_DGRAM) as s:
         try:
             # print("Sending MSG: ", packet.hex())
-            s.sendto(packet, (HOST, BNODE))
+            s.sendto(json.dumps(command).encode(), (HOST, BNODE))
         except:
             print("Failed to connect to B Node")
     return
+
+def terminateConnection():
+    command = {
+        "command": "terminate"
+    }
+    with socket(AF_INET, SOCK_DGRAM) as s:
+        try:
+            # print("Sending MSG: ", packet.hex())
+            s.sendto(json.dumps(command).encode(), (HOST, BNODE))
+        except:
+            print("Failed to connect to B Node")
 
 
 if __name__ == "__main__":

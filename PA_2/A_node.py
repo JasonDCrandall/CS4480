@@ -25,7 +25,7 @@ def generateMessages():
     count = 0
     while (count < 100):
         #TODO Change amount of messages and size
-        msg = bytearray(10)
+        msg = bytearray(512)
         sra = random.randint(0,99)
         dsa = random.randint(0,99)
         srp = random.randint(0,49)
@@ -45,7 +45,7 @@ def sendToRouter():
     for msg in msgArr:
         with socket(AF_INET, SOCK_DGRAM) as s:
             try:
-                print("Sending MSG: ", msg.hex())
+                # print("Sending MSG: ", msg.hex())
                 s.sendto(msg, (HOST, ROUTER))
             except:
                 print("Failed to send message to router")
