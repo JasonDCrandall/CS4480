@@ -17,6 +17,7 @@ BNODE = 5555
 flowTable = None
 msgCount = 0
 foundMatches = []
+firstModified = False
 
 
 def main():
@@ -38,9 +39,10 @@ def getFlowTable():
         command = {
             "command": "requestTable"
         }
-        print("Sending Command: ", command)
+        print("Requesting table")
         s.send(json.dumps(command).encode())
         data = s.recv(1024)
+        print("Received flow table\n")
         flowTable = json.loads(data)
 
 def startServer():

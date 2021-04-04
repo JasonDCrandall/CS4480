@@ -12,14 +12,15 @@ HOST = 'localhost'
 PORT = 5555
 
 def main():
-    t = threading.Thread(target = startServer, daemon=True)
-    t.start()
+    startServer()
+    # t = threading.Thread(target = startServer, daemon=True)
+    # t.start()
 
-    # Initiate the client loop for a safe exit
-    while True:
-        cmdInput = input("")
-        if cmdInput == "q":
-            exit()
+    # # Initiate the client loop for a safe exit
+    # while True:
+    #     cmdInput = input("")
+    #     if cmdInput == "q":
+    #         exit()
 
 def startServer():
     with socket(AF_INET, SOCK_DGRAM) as s:
