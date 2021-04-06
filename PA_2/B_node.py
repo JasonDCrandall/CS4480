@@ -14,7 +14,7 @@ msgCount = 0
 
 def main():
     startServer()
-    print(msgCount)
+    print("Messages Received: ", msgCount)
     # t = threading.Thread(target = startServer, daemon=True)
     # t.start()
 
