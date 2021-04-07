@@ -10,7 +10,7 @@ import sys
 
 # Set up static host and port number
 HOST = 'localhost'
-PORT = 2222
+PORT = 2345
 
 # Initialize the flow table to be sent to the router
 flowTable = {

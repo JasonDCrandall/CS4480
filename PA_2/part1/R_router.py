@@ -12,7 +12,7 @@ import threading
 # Define global variables
 HOST = 'localhost'
 PORT = 3333
-SERVER_PORT = 2222
+SERVER_PORT = 2345
 BNODE = 5555
 flowTable = None
 msgCount = 0
