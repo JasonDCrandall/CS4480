@@ -30,6 +30,11 @@ flowTable = {
             "statistics": 0
         },
         {
+            "match": "sra > 20 and sra <= 40 and dsa > 20 and dsa <= 40 and srp > 10 and dsp > 10",
+            "action": "drop",
+            "statistics": 0
+        },
+        {
             "match": "'No Match Found'",
             "action": "drop",
             "statistics": 0
