@@ -9,25 +9,31 @@ import json
 import sys
 import random
 
+# Define global variables
 HOST = 'localhost'
 ROUTER = 3333
 msgArr = []
 
+# Main function that generates 100 messages and sends them to the router
 def main():
-    # Generate an array of messages to send to the router
     print("Generating Messages to send")
     generateMessages()
-    # Send messages to router
     print("Sending...")
     sendToRouter()
     print("Finished sending")
 
+
+# generateMessages is a function that creates a 512 byte message with
+# a randomly generated header that loops 100 times and appends each message
+# to a gloabal array.
 def generateMessages():
     global msgArr
-    # Loop and create a series of messages to append to the global arr
     count = 0
     while (count < 100):
+        # Initialize 512 byte message with all 0's
         msg = bytearray(512)
+
+        # Generate and assign header
         sra = random.randint(0,99)
         dsa = random.randint(0,99)
         srp = random.randint(0,49)
@@ -41,13 +47,14 @@ def generateMessages():
 
         count += 1
 
+
+# Loops through all the messages in the global message array
+# and sends each one over UDP to R
 def sendToRouter():
     global msgArr
-    # Form a UDP connection with the router
     for msg in msgArr:
         with socket(AF_INET, SOCK_DGRAM) as s:
             try:
-                # print("Sending MSG: ", msg.hex())
                 s.sendto(msg, (HOST, ROUTER))
             except:
                 print("Failed to send message to router")
