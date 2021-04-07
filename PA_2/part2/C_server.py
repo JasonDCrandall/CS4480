@@ -52,6 +52,7 @@ def main():
             s.bind((HOST, PORT))
         except:
             print("OS Error 98: Address already in use")
+            s.close()
             return
         s.listen(2)
         connection, addr = s.accept()
