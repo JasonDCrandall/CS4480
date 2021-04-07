@@ -1,0 +1,141 @@
+Below is some example output from each of the nodes for both part 1 and part 2 of the 
+assignment.
+
+***** Part1 *****:
+
+C Node:
+
+Connected by  ('127.0.0.1', 55216)
+Received Data:  {"command": "requestTable"}
+Sending flow table
+
+
+R Node:
+
+Requesting table
+Received flow table
+
+First Match For: 'No Match Found'
+Message Header: 34 87 11 30
+
+First Match For: srp <= 10 or dsp <= 10
+Message Header: 34 21 0 43
+
+First Match For: sra > 40 and dsa > 40 and srp > 10 and dsp > 10
+Message Header: 70 69 36 11
+
+First Match For: sra <= 20 and dsa <= 20 and srp > 10 and dsp > 10
+Message Header: 18 16 37 38
+
+{
+    "table": [
+        {
+            "match": "sra <= 20 and dsa <= 20 and srp > 10 and dsp > 10",
+            "action": "sra = 21;srp = 41",
+            "statistics": 2
+        },
+        {
+            "match": "sra > 40 and dsa > 40 and srp > 10 and dsp > 10",
+            "action": "forward",
+            "statistics": 28
+        },
+        {
+            "match": "srp <= 10 or dsp <= 10",
+            "action": "drop",
+            "statistics": 32
+        },
+        {
+            "match": "'No Match Found'",
+            "action": "drop",
+            "statistics": 38
+        }
+    ]
+}
+
+
+A Node:
+
+Generating Messages to send
+Sending...
+Finished sending
+
+
+B Node: 
+
+Listening for messages
+First Modified Header:  21 16 41 38
+Messages Received:  30
+
+
+***** Part2 *****:
+
+C Node:
+
+Connected by  ('127.0.0.1', 55222)
+Received Data:  {"command": "requestTable"}
+Sending flow table
+
+
+R Node:
+
+Requesting table
+Received flow table
+
+First Match For: sra > 40 and dsa > 40 and srp > 10 and dsp > 10
+Message Header: 64 98 20 41
+
+First Match For: srp <= 10 or dsp <= 10
+Message Header: 88 89 34 0
+
+First Match For: 'No Match Found'
+Message Header: 73 9 14 32
+
+First Match For: sra <= 20 and dsa <= 20 and srp > 10 and dsp > 10
+Message Header: 18 1 24 46
+
+First Match For: sra == dsa and srp > 10 and dsp > 10
+Message Header: 81 81 32 29
+
+{
+    "table": [
+        {
+            "match": "sra == dsa and srp > 10 and dsp > 10",
+            "action": "forward",
+            "statistics": 3
+        },
+        {
+            "match": "sra <= 20 and dsa <= 20 and srp > 10 and dsp > 10",
+            "action": "sra = 21;srp = 41",
+            "statistics": 2
+        },
+        {
+            "match": "sra > 40 and dsa > 40 and srp > 10 and dsp > 10",
+            "action": "forward",
+            "statistics": 22
+        },
+        {
+            "match": "srp <= 10 or dsp <= 10",
+            "action": "drop",
+            "statistics": 38
+        },
+        {
+            "match": "'No Match Found'",
+            "action": "drop",
+            "statistics": 35
+        }
+    ]
+}
+
+
+A Node:
+
+Generating Messages to send
+Sending...
+Finished sending
+
+
+B Node:
+
+Listening for messages
+First Modified Header:  21 1 41 46
+Messages Received:  27
