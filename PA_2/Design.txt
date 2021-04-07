@@ -1,0 +1,56 @@
+Jason Crandall
+u0726408
+CS 4480
+Design Document
+
+For the overall design of this programming assignment, I decided to split up the 4 nodes into their own individual
+programs. I decided to do this because each of them served such a distinct purpose that I couldn't think of a simple
+way to reduce them down into 1 concise format, so having them each run individually seemed like a more feasable 
+approach.
+
+I'll walk through each of the decisions I made going through each of the programs starting first with C_server.py as 
+it is the starting point for the rest of the information. Since C is the node that sends the flow table to the router,
+I contemplated several ideas on how I wanted to implement the flow table, and I eventually decided on using a JSON 
+object. This is because JSON consists of easily readable data that I can parse on the receiving end, so I structured
+each rule to be part of a table array, each representing an object of their own. This way I can iterate through each
+of the rules as and item in an array, then for each of those items in the array, take and modify any of the elements
+that make up that item. In this case being the "match", "action", and "statistics". From there sending the data over
+TCP was similar to the previous assignment, only I removed the loop in this case as it was only expecting one connection
+to be made.
+
+Moving onto the A_node.py code, here is where the messages are created and sent over UDP to the router. In order to 
+form the 512 byte messages, I decided on using the built in "bytearray" method in python, which essentially creates 
+an array of bytes with a specified size, all initialized to 0 automatically. Being an array, it was very easy to 
+manipulate the first 4 bytes of this array so that I could change the values of sra, dsa, srp, and dsp with the
+random function. Once the bytearray was modified, since data sent over a socket is sent with the type "bytes" i converted
+the byte array into a bytes object again using the built in function "bytes()" that is included in python. I appended
+each of these 512 byte messages, each with randomized headers and with 508 bytes of 0's as the payload, to a global array
+that I looped through to send over to the router to match against the flow table.
+
+The R_router.py program is where most of the code and logic for the assignment takes place, as it first retrieves the flow
+table from C over the TCP connection. I saved the flow table as a global variable so that I can easily increment the 
+values of the statistics with each of the messages that it receives from A. After it gets the flow table, it starts listening
+for UDP connections from A, and when one is received, I programmed a few things to take place. First, I have R convert the
+message into a hex string so that I can easily parse the values of the header into readable integers. Next, I take that 
+parsed header, and I iterate through each of the items in the flow table and compare it to the "match" column. Python has 
+a built in "eval" methode, that converts a string into an evaluation, making the comparison a very easy transaction to make.
+If a match is found, I made a global array of "firstMatches" so that R knows when to print the match and header that it 
+found, and then it moves on to execute the action. I used if statements to either forward the packet, or change the header
+and forward the packet based on the action found in the flow table. If the packet does get sent to B, I struggled to think
+of an efficient way on how to inform B if the sra and srp have been changed, so I again settled on relying on JSON to relay 
+the information. I had R send a command being either "sendMessage" or "terminate" to inform B on whether or not to close the
+connection or expect a message. For the "sendMessage" command from R, I relized that I couldn't serialize a byte array and 
+send it over JSON, so I converted the 512 byte message into a hex string and set it as a value for the "message" key in the 
+JSON block. Once R received 100 messages from A, it would then inform B to terminate and close down.
+
+Finally, the main purpose and design of the B_node.py code was to act as a server recieving UDP data from R. Like I mentioned
+before, this data was in JSON format, so B would parse the JSON data, first by reading the command, then by acting based on 
+that command. If the command was "sendMessage", B would parse the header of the hex string in the "message" section, then look
+at the "firstModified" key that R sent as well. If it was set to "True", it signified that it was the first modified header and 
+that B should print it. Once B received the "terminate" command from R, it would print the total number of messages it received 
+and close its connection.
+
+For part 2 of the assignment, the rule that I decided to add was "sra == dsa and srp > 10 and dsp > 10". The justification behind
+it is that so long as the ports are acceptable (ie greater than 10 as the existing rule states), then if the source and destination
+addresses are the same (meaning the same host), it should always be forwarded even if they are a private address to start out. 
+The probability of this occurring is low, less than 1%, but it does occur, and it fits into the existing 4 rules.
