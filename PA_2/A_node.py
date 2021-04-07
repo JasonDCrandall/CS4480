@@ -15,16 +15,18 @@ msgArr = []
 
 def main():
     # Generate an array of messages to send to the router
+    print("Generating Messages to send")
     generateMessages()
     # Send messages to router
+    print("Sending...")
     sendToRouter()
+    print("Finished sending")
 
 def generateMessages():
     global msgArr
     # Loop and create a series of messages to append to the global arr
     count = 0
     while (count < 100):
-        #TODO Change amount of messages and size
         msg = bytearray(512)
         sra = random.randint(0,99)
         dsa = random.randint(0,99)

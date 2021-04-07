@@ -25,6 +25,7 @@ def main():
     #         exit()
 
 def startServer():
+    print("Listening for messages")
     global msgCount
     with socket(AF_INET, SOCK_DGRAM) as s:
         s.bind((HOST, PORT))

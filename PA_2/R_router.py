@@ -49,7 +49,7 @@ def startServer():
     with socket(AF_INET, SOCK_DGRAM) as s:
         s.bind((HOST, PORT))
         while True:
-            data, addr = s.recvfrom(512)
+            data, addr = s.recvfrom(2048)
             #print(f"Received msg from {addr}: {data}")
             performAction(data)
             msgCount += 1
