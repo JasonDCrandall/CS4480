@@ -1,0 +1,26 @@
+Jason Crandall
+u0726408   
+CS 4480
+Test Descriptions
+
+For the testing of this programming assignment, a lot of it consisting of using print statements throughout 
+the code, and verifying the results. For example, once I had the layout for the 4 nodes completed, rather
+than sending 100, 512 byte messages from A, I sent 10, 10 byte messages from A. This way I was able to print
+the data that was being sent from A, received at R, sent from R, and received at B without being too cluttered.
+I made it so the first 4 bytes were still the header bytes, so the only difference was the quantity and size of
+the payload for the messages.
+
+I also added try/except blocks at each connection so that the code could notify the user if there was a failed 
+connection at any of the messages. This was useful once I increased the size of the messages back to 512 bytes,
+as once I did, I realized that I had to increase the byte cap in B's recvfrom function, as it was failing to 
+get the whole message. With this change and all of the print statements successful, I took them out and left
+only the required prints for the assignment. The only additional one I kept in was the total amount of messages
+that B received so that one could easily compare it to the statistics of the forwarded messages in R's flow table
+after 100 had been sent.
+
+One of the areas where my code does fail and I have not been able to find a solution to is running the C_server.py 
+multiple times once all 4 nodes are finished. For example, when you run all 4 nodes, the code completes successfully,
+but if you try to run it immediately afterwards, C_server.py will state that the Address is already in use. It will
+become available a few seconds later and will run fine again, but as to why the address isn't available I am unsure.
+I did however handle this exception in the code so that an interrupt does not occur, but rather it will exit the 
+program safely and close the socket.
