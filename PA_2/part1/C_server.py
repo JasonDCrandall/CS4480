@@ -43,7 +43,11 @@ flowTable = {
 def main():
     # Open a connection and wait for input from the router
     with socket(AF_INET,SOCK_STREAM) as s:
-        s.bind((HOST, PORT))
+        try:
+            s.bind((HOST, PORT))
+        except:
+            print("OS Error 98: Address already in use")
+            return
         s.listen(2)
         connection, addr = s.accept()
         with connection:
