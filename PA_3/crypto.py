@@ -32,7 +32,6 @@ bPublicKey_bytes = bPublicKey.public_bytes(encoding=serialization.Encoding.PEM,
 bob_hash = hashes.Hash(hashes.SHA1(), default_backend())
 bob_hash.update(bPublicKey_bytes)
 final_hash = bob_hash.finalize()
-final_hash = bob_hash.finalize()
 
 # Sign ^ with c private key (from disk)
 cPrivateKey = load_private_key('/home/u0726408/cs4480/CS4480/PA_3/keys/cPrivate.pem')
