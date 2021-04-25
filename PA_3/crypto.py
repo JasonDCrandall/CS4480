@@ -24,7 +24,7 @@ def load_private_key(filename):
 
 
 # Read bob public key from disk
-bPublicKey = load_public_key('keys\\bobPublic.pem')
+bPublicKey = load_public_key('/home/u0726408/cs4480/CS4480/PA_3/keys/bobPublic.pem')
 bPublicKey_bytes = bPublicKey.public_bytes(encoding=serialization.Encoding.PEM,
                                            format=serialization.PublicFormat.SubjectPublicKeyInfo)
 # Hash bob public with sha1
@@ -33,7 +33,7 @@ bob_hash.update(bPublicKey_bytes)
 final_hash = bob_hash.finalize()
 print(bob_hash)
 # Encrypt ^ with c private key (from disk)
-cPublicKey = load_public_key('keys\\cPublic.pem')
+cPublicKey = load_public_key('/home/u0726408/cs4480/CS4480/PA_3/keys/cPublic.pem')
 # cPrivateKey_bytes = cPrivateKey.private_bytes(encoding=serialization.Encoding.PEM,
 #                                               format=serialization.PublicFormat.SubjectPublicKeyInfo)
 encryption = cPublicKey.encrypt(final_hash, padding.OAEP(mgf=padding.MGF1(algorithm=hashes.SHA1()),algorithm=hashes.SHA1(),label=None))
