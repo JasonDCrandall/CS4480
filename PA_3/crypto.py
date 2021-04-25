@@ -34,7 +34,7 @@ bob_hash.update(bPublicKey_bytes)
 final_hash = bob_hash.finalize()
 
 # Sign ^ with c private key (from disk)
-cPrivateKey = load_private_key('/home/u0726408/cs4480/CS4480/PA_3/keys/bobPublic.pemcPrivate.pem')
+cPrivateKey = load_private_key('/home/u0726408/cs4480/CS4480/PA_3/keys/cPrivate.pem')
 b_sig = cPrivateKey.sign(final_hash, padding.PSS(mgf=padding.MGF1(algorithm=hashes.SHA1()),salt_length=padding.PSS.MAX_LENGTH), hashes.SHA1())
 bob_bytearray = bytearray(b_sig)
 bob_bytearray += delim
