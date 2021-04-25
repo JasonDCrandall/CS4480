@@ -28,7 +28,7 @@ bPublicKey = load_public_key('/home/u0726408/cs4480/CS4480/PA_3/keys/bobPublic.p
 bPublicKey_bytes = bPublicKey.public_bytes(encoding=serialization.Encoding.PEM,
                                            format=serialization.PublicFormat.SubjectPublicKeyInfo)
 # Hash bob public with sha1
-bob_hash = hashes.Hash(hashes.SHA1(), backend=None)
+bob_hash = hashes.Hash(hashes.SHA1(), default_backend())
 bob_hash.update(bPublicKey_bytes)
 final_hash = bob_hash.finalize()
 print(bob_hash)
