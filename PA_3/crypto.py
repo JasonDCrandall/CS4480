@@ -43,7 +43,7 @@ bob_msg = b_sig+delim+bPublicKey_bytes
 # bob_bytearray += delim
 # bob_bytearray += bPublicKey_bytes
 
-print(bob_msg)
+print(bytes(bob_msg))
 
 # # Bob sends public key KC-(H(KB+)), KB+
 
