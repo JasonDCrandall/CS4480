@@ -22,7 +22,7 @@ def main():
         while True:
             connection, addr = s.accept()
             with connection:
-                data, addr = s.recvfrom(2048)
+                data = connection.recv(1024)
                 command = ''
                 # Ensure the correct format is received
                 try:
@@ -70,7 +70,7 @@ def decryptMsg(raw_full_a_msg):
     decipher = Cipher(algorithms.AES(aes_key), modes.CBC(biv), default_backend())
     decryptor = decipher.decryptor()
     unencrypted_packet = decryptor.update(first_e)
-    
+
     # Bob gets Alic public key from disk
     aPublicKey = load_public_key('/home/u0726408/cs4480/CS4480/PA_3/keys/alicePublic.pem')
 
