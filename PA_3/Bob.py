@@ -23,6 +23,7 @@ def main():
         while True:
             connection, addr = s.accept()
             with connection:
+                print('Connected by', addr)
                 data = connection.recv(1024)
                 command = ''
                 # Ensure the correct format is received
@@ -33,10 +34,11 @@ def main():
                     command = data
                 if(command == "requestKey"):
                     key_msg = getKeyInfo()
+                    print("Sending Key")
                     connection.send(key_msg)
                 else:
                     msg = decryptMsg(command)
-                    print("Received message from Alice: ",msg.decode())
+                    print("Received message from Alice:",msg.decode())
                     exit()
 
 def getKeyInfo():
@@ -74,7 +76,6 @@ def decryptMsg(raw_full_a_msg):
     unencrypted_packet = decryptor.update(first_e)
     unpadder = p.PKCS7(128).unpadder()
     unpadded_packet = unpadder.update(unencrypted_packet) + unpadder.finalize()
-    print(unpadded_packet)
 
 
     # Bob gets Alic public key from disk
@@ -108,17 +109,6 @@ def load_private_key(filename):
     private_key = serialization.load_pem_private_key(
         pemlines, None, default_backend())
     return private_key
-# Below are the basic steps for Bob's side of the program:
-
-# Provide public key with signed msg digest
-
-# Wait
-
-# Receeive secure data from Alice
-
-# Use crypto lib to inverse Alice's msg and print
-
-# End
 
 if __name__ == "__main__":
     main()

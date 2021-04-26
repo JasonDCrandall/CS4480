@@ -50,6 +50,7 @@ def buildMessage(bob_msg):
     # Alice takes encrypted msg, decrypt with c public key (from disk)
     cPublicKey = load_public_key('/home/u0726408/cs4480/CS4480/PA_3/keys/cPublic.pem')
     try:
+        print("Verifying bob's key")
         aVerify = cPublicKey.verify(recv_b_sig, recv_b_key, padding.PSS(mgf=padding.MGF1(
             hashes.SHA1()), salt_length=padding.PSS.MAX_LENGTH), hashes.SHA1())
     except:
@@ -62,7 +63,6 @@ def buildMessage(bob_msg):
 
     # Print message to send to bob
     string_message = input("Enter a message to send to Bob: ")
-    print('Sending message')
     message = string_message.encode()
     byteMessage = bytearray(message)
 
@@ -78,7 +78,6 @@ def buildMessage(bob_msg):
     a_msg = bytes(a_msg_arr)
     padder = p.PKCS7(128).padder()
     padded_a = padder.update(a_msg) + padder.finalize()
-    print(padded_a)
 
     # Encrypt ^ with AES key --- store as A
     ks = bytearray(os.urandom(32))
