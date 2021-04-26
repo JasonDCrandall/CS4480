@@ -61,8 +61,8 @@ def buildMessage(bob_msg):
         recv_b_key, default_backend())
 
     # Print message to send to bob
-    string_message = "This is a test message with text"
-    print('Sending to bob: ', string_message)
+    string_message = input("Enter a message to send to Bob: ")
+    print('Sending message')
     message = string_message.encode()
     byteMessage = bytearray(message)
 
