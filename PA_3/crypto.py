@@ -115,7 +115,7 @@ aes_key = bPrivateKey.decrypt(second_e,padding.OAEP(mgf=padding.MGF1(algorithm=h
 
 # NOW DO A: Decrypt A with AES key (split into msg, KA-(H(m)))
 biv = b'a' * 16
-decipher = Cipher(algorithms.AES(aes_key), modes.CBC(biv))
+decipher = Cipher(algorithms.AES(aes_key), modes.CBC(biv), default_backend())
 decryptor = decipher.decryptor()
 unencrypted_packet = decryptor.update(first_e)
 print(unencrypted_packet)
