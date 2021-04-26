@@ -87,6 +87,7 @@ def decryptMsg(raw_full_a_msg):
     msg = split_hash[1]
 
     try:
+        print("Verifying Alice's Signature")
         recv_msg = aPublicKey.verify(a_hash,msg,padding.PSS(mgf=padding.MGF1(algorithm=hashes.SHA1()),salt_length=padding.PSS.MAX_LENGTH), hashes.SHA1())
     except:
         print("Unable to verify Alice's message")
