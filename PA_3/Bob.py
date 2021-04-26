@@ -23,7 +23,6 @@ def main():
         while True:
             connection, addr = s.accept()
             with connection:
-                print('Connected by', addr)
                 data = connection.recv(1024)
                 command = ''
                 # Ensure the correct format is received
@@ -34,7 +33,7 @@ def main():
                     command = data
                 if(command == "requestKey"):
                     key_msg = getKeyInfo()
-                    print("Sending Key")
+                    print("Sending key to Alice")
                     connection.send(key_msg)
                 else:
                     msg = decryptMsg(command)
