@@ -1,4 +1,9 @@
-# Code representing alice in the secure text transfer
+# Code representing alice in the secure text transfer.
+# Requests Bob's public key, then encrypts a text message inputed from the user
+# to send back to bob that is signed with Alice's private key.
+# 
+# By Jason Crandall u0726408
+
 import os
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives.asymmetric import utils
@@ -15,7 +20,6 @@ HOST = "localhost"
 BPORT = 3344
 APORT = 4455
 delim = bytearray(b'++++++++++')
-# Below are the steps needed from Alice's side of the program:
 
 def main():
     bobInfo = requestBobsKey()
@@ -23,10 +27,8 @@ def main():
     sendMsgToBob(msg)
 
 
-
-
-# Request and verify Bob's public Key
 def requestBobsKey():
+    # Connect to bob and request his key
     with socket(AF_INET, SOCK_STREAM) as s:
         try:
             s.connect((HOST, BPORT))
@@ -41,16 +43,14 @@ def requestBobsKey():
         data = s.recv(1024)
         return data
         
+
 def buildMessage(bob_msg):
-    # ********** Alice **********
-    # Verification from Alice ****
-    # Extract public key after delimeter
+    # Split receivd data into key and signature
     split_b_msg = bob_msg.split(b'++++++++++')
     recv_b_key = split_b_msg[1]
     recv_b_sig = split_b_msg[0]
 
-    # Alice takes encrypted msg, decrypt with c public key (from disk)
-    #cPublicKey = load_public_key('/home/u0726408/cs4480/CS4480/PA_3/keys/cPublic.pem')
+    # Takes signature, varify with c public key
     cPublicKey = load_public_key('keys/cPublic.pem')
     try:
         print("Verifying bob's key")
@@ -60,30 +60,27 @@ def buildMessage(bob_msg):
         print("Verification failed for received message")
         exit()
 
-    # Result is bob public key (can compare with delimited part)
+    # Serialize and store Bob's public key
     formatted_b_key = serialization.load_pem_public_key(
         recv_b_key, default_backend())
 
-    # Print message to send to bob
+    # Retrieve message to send from user
     string_message = input("Enter a message to send to Bob: ")
     message = string_message.encode()
     byteMessage = bytearray(message)
 
-    # Read Alice private key from disk
-    #aPrivateKey = load_private_key('/home/u0726408/cs4480/CS4480/PA_3/keys/alicePrivate.pem')
+    # Sign new message with Alice's private key and hash with SHA1
     aPrivateKey = load_private_key('keys/alicePrivate.pem')
-
-    # Encrypt new hash with Alic private key
     a_sig = bytearray(aPrivateKey.sign(message, padding.PSS(mgf=padding.MGF1(
         algorithm=hashes.SHA1()), salt_length=padding.PSS.MAX_LENGTH), hashes.SHA1()))
 
-    # Combine msg with ^
+    # Concatonate signature with message and pad to fit block size
     a_msg_arr = a_sig+delim+byteMessage
     a_msg = bytes(a_msg_arr)
     padder = p.PKCS7(128).padder()
     padded_a = padder.update(a_msg) + padder.finalize()
 
-    # Encrypt ^ with AES key --- store as A
+    # Encrypt concatonation with AES key --- store as first part of message to send
     ks = bytearray(os.urandom(32))
     raw_ks = bytes(ks)
     iv = b'a' * 16 # This is the initialization vector
@@ -92,18 +89,19 @@ def buildMessage(bob_msg):
     ct = encryptor.update(padded_a)
 
     a_alice_encryption = bytearray(ct)
-    raw_a_alice_encryption = bytes(a_alice_encryption)
 
-    # Encrypt AES key with Bob public key --- store as B
+    # Encrypt AES key with Bob public key --- store as secondpart of the message to send
     b_alice_encryption = bytearray(formatted_b_key.encrypt(raw_ks, padding.OAEP(mgf=padding.MGF1(algorithm=hashes.SHA1()),algorithm=hashes.SHA1(),label=None)))
 
-    # Concatonate A, B
+    # Concatonate first and second pieces and return
     full_a_msg = a_alice_encryption+delim+b_alice_encryption
     raw_full_a_msg = bytes(full_a_msg)
 
     return raw_full_a_msg
 
+
 def sendMsgToBob(msg):
+    # Connect to bob and send newly formed message
     with socket(AF_INET, SOCK_STREAM) as s:
         try:
             s.connect((HOST, BPORT))
@@ -113,13 +111,15 @@ def sendMsgToBob(msg):
         print('Sending Message')
         s.send(msg)
 
+
+# Helper method that serializes a stored public key
 def load_public_key(filename):
     with open(filename, "rb") as pem_in:
         pemlines = pem_in.read()
     public_key = serialization.load_pem_public_key(pemlines, default_backend())
     return public_key
 
-
+# Helper method that serializes a stored private key
 def load_private_key(filename):
     with open(filename, "rb") as pem_in:
         pemlines = pem_in.read()
