@@ -15,8 +15,9 @@ HOST = 'localhost'
 PORT = 3344
 
 def main():
-    with socket(AF_INET, SOCK_DGRAM) as s:
+    with socket(AF_INET, SOCK_STREAM) as s:
         s.bind((HOST, PORT))
+        s.listen(2)
         # Listen for incoming messages
         while True:
             connection, addr = s.accept()
@@ -69,7 +70,7 @@ def decryptMsg(raw_full_a_msg):
     decipher = Cipher(algorithms.AES(aes_key), modes.CBC(biv), default_backend())
     decryptor = decipher.decryptor()
     unencrypted_packet = decryptor.update(first_e)
-    print(unencrypted_packet)
+    
     # Bob gets Alic public key from disk
     aPublicKey = load_public_key('/home/u0726408/cs4480/CS4480/PA_3/keys/alicePublic.pem')
 
