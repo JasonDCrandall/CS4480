@@ -78,6 +78,7 @@ def buildMessage(bob_msg):
     a_msg = bytes(a_msg_arr)
     padder = p.PKCS7(128).padder()
     padded_a = padder.update(a_msg) + padder.finalize()
+    print(padded_a)
 
     # Encrypt ^ with AES key --- store as A
     ks = bytearray(os.urandom(32))

@@ -73,6 +73,7 @@ def decryptMsg(raw_full_a_msg):
     decryptor = decipher.decryptor()
     unpadder = p.PKCS7(128).unpadder()
     unpadded_data = unpadder.update(first_e) + unpadder.finalize()
+    print(unpadded_data)
     unencrypted_packet = decryptor.update(unpadded_data)
 
     # Bob gets Alic public key from disk
