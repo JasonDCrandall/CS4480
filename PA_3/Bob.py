@@ -34,7 +34,8 @@ def main():
                     key_msg = getKeyInfo()
                     connection.send(key_msg)
                 else:
-                    decryptMsg(command)
+                    msg = decryptMsg(command)
+                    print("Received message from Alice: ",msg.decode())
                     exit()
 
 def getKeyInfo():
@@ -83,8 +84,11 @@ def decryptMsg(raw_full_a_msg):
         recv_msg = aPublicKey.verify(a_hash,msg,padding.PSS(mgf=padding.MGF1(algorithm=hashes.SHA1()),salt_length=padding.PSS.MAX_LENGTH), hashes.SHA1())
     except:
         print("Unable to verify Alice's message")
+        exit()
+    
+    return msg
 
-    print(msg)
+    
 
 def load_public_key(filename):
     with open(filename, "rb") as pem_in:
