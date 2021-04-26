@@ -57,7 +57,6 @@ def getKeyInfo():
     return bob_msg
 
 def decryptMsg(raw_full_a_msg):
-    print(raw_full_a_msg)
     # ********* BOB *************
     # Break up A,B
     split_a_msg = raw_full_a_msg.split(b'++++++++++')
