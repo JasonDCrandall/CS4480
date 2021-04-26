@@ -71,7 +71,7 @@ def decryptMsg(raw_full_a_msg):
     biv = b'a' * 16
     decipher = Cipher(algorithms.AES(aes_key), modes.CBC(biv), default_backend())
     decryptor = decipher.decryptor()
-    unpadder = p.PKCS7(128).unpadder()
+    unpadder = p.PKCS7(256).unpadder()
     unpadded_data = unpadder.update(first_e) + unpadder.finalize()
     unencrypted_packet = decryptor.update(unpadded_data)
 

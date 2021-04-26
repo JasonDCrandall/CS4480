@@ -76,7 +76,7 @@ def buildMessage(bob_msg):
     # Combine msg with ^
     a_msg_arr = a_sig+delim+byteMessage
     a_msg = bytes(a_msg_arr)
-    padder = p.PKCS7(128).padder()
+    padder = p.PKCS7(256).padder()
     padded_a = padder.update(a_msg) + padder.finalize()
 
     # Encrypt ^ with AES key --- store as A
