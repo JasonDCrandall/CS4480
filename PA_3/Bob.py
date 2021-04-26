@@ -57,6 +57,7 @@ def getKeyInfo():
     return bob_msg
 
 def decryptMsg(raw_full_a_msg):
+    print(raw_full_a_msg)
     # ********* BOB *************
     # Break up A,B
     split_a_msg = raw_full_a_msg.split(b'++++++++++')
@@ -75,7 +76,6 @@ def decryptMsg(raw_full_a_msg):
     unpadded_data = unpadder.update(first_e) + unpadder.finalize()
     unencrypted_packet = decryptor.update(unpadded_data)
 
-    print(unencrypted_packet)
 
     # Bob gets Alic public key from disk
     aPublicKey = load_public_key('/home/u0726408/cs4480/CS4480/PA_3/keys/alicePublic.pem')
