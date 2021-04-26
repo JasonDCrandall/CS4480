@@ -23,6 +23,8 @@ def main():
     sendMsgToBob(msg)
 
 
+
+
 # Request and verify Bob's public Key
 def requestBobsKey():
     with socket(AF_INET, SOCK_STREAM) as s:
@@ -48,7 +50,8 @@ def buildMessage(bob_msg):
     recv_b_sig = split_b_msg[0]
 
     # Alice takes encrypted msg, decrypt with c public key (from disk)
-    cPublicKey = load_public_key('/home/u0726408/cs4480/CS4480/PA_3/keys/cPublic.pem')
+    #cPublicKey = load_public_key('/home/u0726408/cs4480/CS4480/PA_3/keys/cPublic.pem')
+    cPublicKey = load_public_key('keys/cPublic.pem')
     try:
         print("Verifying bob's key")
         aVerify = cPublicKey.verify(recv_b_sig, recv_b_key, padding.PSS(mgf=padding.MGF1(
@@ -67,7 +70,8 @@ def buildMessage(bob_msg):
     byteMessage = bytearray(message)
 
     # Read Alice private key from disk
-    aPrivateKey = load_private_key('/home/u0726408/cs4480/CS4480/PA_3/keys/alicePrivate.pem')
+    #aPrivateKey = load_private_key('/home/u0726408/cs4480/CS4480/PA_3/keys/alicePrivate.pem')
+    aPrivateKey = load_private_key('keys/alicePrivate.pem')
 
     # Encrypt new hash with Alic private key
     a_sig = bytearray(aPrivateKey.sign(message, padding.PSS(mgf=padding.MGF1(

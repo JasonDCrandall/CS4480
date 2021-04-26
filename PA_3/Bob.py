@@ -25,7 +25,6 @@ def main():
             with connection:
                 data = connection.recv(1024)
                 command = ''
-                # Ensure the correct format is received
                 try:
                     jsonData = json.loads(data.decode())
                     command = jsonData["command"]
@@ -40,22 +39,28 @@ def main():
                     print("Received message from Alice:",msg.decode())
                     exit()
 
+
+
+
 def getKeyInfo():
     # ******** BOB *********
     # Read bob public key from disk
-    bPublicKey = load_public_key('/home/u0726408/cs4480/CS4480/PA_3/keys/bobPublic.pem')
+    #bPublicKey = load_public_key('/home/u0726408/cs4480/CS4480/PA_3/keys/bobPublic.pem')
+    bPublicKey = load_public_key('keys/bobPublic.pem')
     bPublicKey_bytes = bytearray(bPublicKey.public_bytes(encoding=serialization.Encoding.PEM,
                                                         format=serialization.PublicFormat.SubjectPublicKeyInfo))
     raw_b_public_key = bytes(bPublicKey_bytes)
 
     # Sign ^ with c private key (from disk)
-    cPrivateKey = load_private_key('/home/u0726408/cs4480/CS4480/PA_3/keys/cPrivate.pem')
-    #b_sig = bytearray(cPrivateKey.sign(final_hash, padding.PSS(mgf=padding.MGF1(algorithm=hashes.SHA1()),salt_length=padding.PSS.MAX_LENGTH), hashes.SHA1()))
+    #cPrivateKey = load_private_key('/home/u0726408/cs4480/CS4480/PA_3/keys/cPrivate.pem')
+    cPrivateKey = load_private_key('keys/cPrivate.pem')
     b_sig = bytearray(cPrivateKey.sign(raw_b_public_key, padding.PSS(mgf=padding.MGF1(
         algorithm=hashes.SHA1()), salt_length=padding.PSS.MAX_LENGTH), hashes.SHA1()))
     bob_msg_arr = b_sig+delim+bPublicKey_bytes
     bob_msg = bytes(bob_msg_arr)
     return bob_msg
+
+
 
 def decryptMsg(raw_full_a_msg):
     # ********* BOB *************
@@ -65,7 +70,8 @@ def decryptMsg(raw_full_a_msg):
     second_e = split_a_msg[1]
 
     # DO B FIRST: Decrypt AES key with Bob's private key
-    bPrivateKey = load_private_key('/home/u0726408/cs4480/CS4480/PA_3/keys/bobPrivate.pem')
+    #bPrivateKey = load_private_key('/home/u0726408/cs4480/CS4480/PA_3/keys/bobPrivate.pem')
+    bPrivateKey = load_private_key('keys/bobPrivate.pem')
     aes_key = bPrivateKey.decrypt(second_e,padding.OAEP(mgf=padding.MGF1(algorithm=hashes.SHA1()),algorithm=hashes.SHA1(),label=None))
 
     # NOW DO A: Decrypt A with AES key (split into msg, KA-(H(m)))
@@ -76,9 +82,9 @@ def decryptMsg(raw_full_a_msg):
     unpadder = p.PKCS7(128).unpadder()
     unpadded_packet = unpadder.update(unencrypted_packet) + unpadder.finalize()
 
-
     # Bob gets Alic public key from disk
-    aPublicKey = load_public_key('/home/u0726408/cs4480/CS4480/PA_3/keys/alicePublic.pem')
+    #aPublicKey = load_public_key('/home/u0726408/cs4480/CS4480/PA_3/keys/alicePublic.pem')
+    aPublicKey = load_public_key('keys/alicePublic.pem')
 
     # Decrypts second part of delimeted data with Alice public key
     split_hash = unpadded_packet.split(b'++++++++++')
@@ -95,7 +101,6 @@ def decryptMsg(raw_full_a_msg):
     return msg
 
     
-
 def load_public_key(filename):
     with open(filename, "rb") as pem_in:
         pemlines = pem_in.read()
