@@ -7,6 +7,7 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.primitives import padding as p
 from socket import *
 import json
 
@@ -70,7 +71,9 @@ def decryptMsg(raw_full_a_msg):
     biv = b'a' * 16
     decipher = Cipher(algorithms.AES(aes_key), modes.CBC(biv), default_backend())
     decryptor = decipher.decryptor()
-    unencrypted_packet = decryptor.update(first_e)
+    unpadder = p.PKCS7(128).unpadder()
+    unpadded_data = unpadder.update(first_e) + unpadder.finalize()
+    unencrypted_packet = decryptor.update(unpadded_data)
 
     # Bob gets Alic public key from disk
     aPublicKey = load_public_key('/home/u0726408/cs4480/CS4480/PA_3/keys/alicePublic.pem')
