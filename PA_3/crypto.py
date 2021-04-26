@@ -7,7 +7,7 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 
-delim = bytearray(b'+++++')
+delim = bytearray(b'++++++++++')
 
 
 def load_public_key(filename):
@@ -47,7 +47,7 @@ bob_msg = bytes(bob_msg_arr)
 # ********** Alice **********
 # Verification from Alice ****
 # Extract public key after delimeter
-split_b_msg = bob_msg.split(b'+++++')
+split_b_msg = bob_msg.split(b'++++++++++')
 recv_b_key = split_b_msg[1]
 recv_b_sig = split_b_msg[0]
 
@@ -81,15 +81,17 @@ a_sig = bytearray(aPrivateKey.sign(message, padding.PSS(mgf=padding.MGF1(
 # Combine msg with ^
 a_msg_arr = a_sig+delim+byteMessage
 a_msg = bytes(a_msg_arr)
+print(a_msg)
 
 # Encrypt ^ with AES key --- store as A
-ks = bytearray(32)
+ks = bytearray(os.urandom(32))
 raw_ks = bytes(ks)
 iv = b'a' * 16 # This is the initialization vector
 cipher = Cipher(algorithms.AES(raw_ks), modes.CBC(iv), default_backend())
 encryptor = cipher.encryptor()
 a_alice_encryption = bytearray(encryptor.update(a_msg))
 raw_a_alice_encryption = bytes(a_alice_encryption)
+print(raw_a_alice_encryption)
 
 # Encrypt AES key with Bob public key --- store as B
 b_alice_encryption = bytearray(formatted_b_key.encrypt(raw_ks, padding.OAEP(mgf=padding.MGF1(algorithm=hashes.SHA1()),algorithm=hashes.SHA1(),label=None)))
@@ -97,15 +99,39 @@ b_alice_encryption = bytearray(formatted_b_key.encrypt(raw_ks, padding.OAEP(mgf=
 # Concatonate A, B
 full_a_msg = a_alice_encryption+delim+b_alice_encryption
 raw_full_a_msg = bytes(full_a_msg)
-print(raw_full_a_msg)
 
 
 # ********* BOB *************
 # Break up A,B
+split_a_msg = raw_full_a_msg.split(b'++++++++++')
+first_e = split_a_msg[0]
+second_e = split_a_msg[1]
+print(first_e)
+
 # DO B FIRST: Decrypt AES key with Bob's private key
-# Save AES key
+bPrivateKey = load_private_key('/home/u0726408/cs4480/CS4480/PA_3/keys/bobPrivate.pem')
+#bPrivateKey = load_private_key('keys\\bobPrivate.pem')
+aes_key = bPrivateKey.decrypt(second_e,padding.OAEP(mgf=padding.MGF1(algorithm=hashes.SHA1()),algorithm=hashes.SHA1(),label=None))
+
 # NOW DO A: Decrypt A with AES key (split into msg, KA-(H(m)))
+biv = b'a' * 16
+decipher = Cipher(algorithms.AES(aes_key), modes.CBC(biv))
+decryptor = decipher.decryptor()
+unencrypted_packet = decryptor.update(first_e)
+print(unencrypted_packet)
 # Bob gets Alic public key from disk
+aPublicKey = load_public_key('/home/u0726408/cs4480/CS4480/PA_3/keys/alicePublic.pem')
+#aPublicKey = load_public_key('keys\\alicePublic.pem')
+
 # Decrypts second part of delimeted data with Alice public key
-# compare ^ with received msg
+split_hash = unencrypted_packet.split(b'++++++++++')
+a_hash = split_hash[0]
+msg = split_hash[1]
+
+try:
+    recv_msg = aPublicKey.verify(a_hash,msg,padding.PSS(mgf=padding.MGF1(algorithm=hashes.SHA1()),salt_length=padding.PSS.MAX_LENGTH), hashes.SHA1())
+except:
+    print("Unable to verify Alice's message")
+
+print(msg)
 # if match, display
