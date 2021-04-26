@@ -85,14 +85,19 @@ a_msg = bytes(a_msg_arr)
 # Encrypt ^ with AES key --- store as A
 ks = bytearray(32)
 raw_ks = bytes(ks)
-iv = b'a' * 16
+iv = b'a' * 16 # This is the initialization vector
 cipher = Cipher(algorithms.AES(raw_ks), modes.CBC(iv), default_backend())
 encryptor = cipher.encryptor()
 a_alice_encryption = bytearray(encryptor.update(a_msg))
 raw_a_alice_encryption = bytes(a_alice_encryption)
-print(a_alice_encryption)
+
 # Encrypt AES key with Bob public key --- store as B
+b_alice_encryption = bytearray(formatted_b_key.encrypt(raw_ks, padding.OAEP(mgf=padding.MGF1(algorithm=hashes.SHA1()),algorithm=hashes.SHA1(),label=None)))
+
 # Concatonate A, B
+full_a_msg = a_alice_encryption+delim+b_alice_encryption
+raw_full_a_msg = bytes(full_a_msg)
+print(raw_full_a_msg)
 
 
 # ********* BOB *************
