@@ -66,7 +66,7 @@ formatted_b_key = serialization.load_pem_public_key(
     recv_b_key, default_backend())
 
 # Request user input for msg
-string_message = "This is a test message"
+string_message = "This is a test message just to see"
 message = string_message.encode()
 byteMessage = bytearray(message)
 
