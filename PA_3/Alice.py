@@ -76,6 +76,7 @@ def buildMessage(bob_msg):
     # Combine msg with ^
     a_msg_arr = a_sig+delim+byteMessage
     a_msg = bytes(a_msg_arr)
+    print(a_msg)
 
     # Encrypt ^ with AES key --- store as A
     ks = bytearray(os.urandom(32))
@@ -86,7 +87,7 @@ def buildMessage(bob_msg):
     ct = encryptor.update(a_msg)
     padder = p.PKCS7(128).padder()
     padded_ct = padder.update(ct) + padder.finalize()
-    print(padded_ct)
+
     a_alice_encryption = bytearray(padded_ct)
     raw_a_alice_encryption = bytes(a_alice_encryption)
 
