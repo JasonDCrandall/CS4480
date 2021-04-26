@@ -71,16 +71,17 @@ def decryptMsg(raw_full_a_msg):
     biv = b'a' * 16
     decipher = Cipher(algorithms.AES(aes_key), modes.CBC(biv), default_backend())
     decryptor = decipher.decryptor()
-    unpadder = p.PKCS7(256).unpadder()
-    unpadded_data = unpadder.update(first_e) + unpadder.finalize()
-    unencrypted_packet = decryptor.update(unpadded_data)
+    unencrypted_packet = decryptor.update(first_e)
+    unpadder = p.PKCS7(128).unpadder()
+    unpadded_packet = unpadder.update(unencrypted_packet) + unpadder.finalize()
+    print(unpadded_packet)
 
 
     # Bob gets Alic public key from disk
     aPublicKey = load_public_key('/home/u0726408/cs4480/CS4480/PA_3/keys/alicePublic.pem')
 
     # Decrypts second part of delimeted data with Alice public key
-    split_hash = unencrypted_packet.split(b'++++++++++')
+    split_hash = unpadded_packet.split(b'++++++++++')
     a_hash = split_hash[0]
     msg = split_hash[1]
 
