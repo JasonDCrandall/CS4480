@@ -74,7 +74,7 @@ def decryptMsg(raw_full_a_msg):
     unpadder = p.PKCS7(128).unpadder()
     unpadded_data = unpadder.update(first_e) + unpadder.finalize()
     print(unpadded_data)
-    unencrypted_packet = decryptor.update(unpadded_data)
+    unencrypted_packet = decryptor.update(unpadded_data) + decryptor.finalize()
 
     # Bob gets Alic public key from disk
     aPublicKey = load_public_key('/home/u0726408/cs4480/CS4480/PA_3/keys/alicePublic.pem')

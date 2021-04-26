@@ -86,7 +86,7 @@ def buildMessage(bob_msg):
     iv = b'a' * 16 # This is the initialization vector
     cipher = Cipher(algorithms.AES(raw_ks), modes.CBC(iv), default_backend())
     encryptor = cipher.encryptor()
-    ct = encryptor.update(padded_a)
+    ct = encryptor.update(padded_a) + encryptor.finalize()
     a_alice_encryption = bytearray(ct)
     raw_a_alice_encryption = bytes(a_alice_encryption)
 
