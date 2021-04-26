@@ -71,7 +71,7 @@ message = string_message.encode()
 byteMessage = bytearray(message)
 
 # Read Alice private key from disk
-aPrivateKey = load_public_key('/home/u0726408/cs4480/CS4480/PA_3/keys/alicePrivate.pem')
+aPrivateKey = load_private_key('/home/u0726408/cs4480/CS4480/PA_3/keys/alicePrivate.pem')
 #aPrivateKey = load_private_key('keys\\alicePrivate.pem')
 
 # Encrypt new hash with Alic private key
